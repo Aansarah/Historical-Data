@@ -75,3 +75,20 @@ highest_closing_date = df.loc[df['Close'].idxmax(), 'Date']
 lowest_closing_date = df.loc[df['Close'].idxmin(), 'Date']
 
 (overall_change, average_daily_return, volatility, highest_closing_date, lowest_closing_date)
+
+# Data Preprocessing
+# Convert 'Date' to datetime format
+df['Date'] = pd.to_datetime(df['Date'])
+# Sort data by date
+df.sort_values('Date', inplace=True)
+# Set 'Date' as index
+df.set_index('Date', inplace=True)
+
+# Handle missing values
+# Assuming 'Close' is the main column of interest, fill missing values with the previous value
+df['Close'].fillna(method='ffill', inplace=True)
+
+# Calculate daily percentage change
+df['Daily Change %'] = df['Close'].pct_change() * 100
+
+df.head()
