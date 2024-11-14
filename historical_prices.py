@@ -121,3 +121,41 @@ def calculate_rsi(data, window=14):
 df['RSI'] = calculate_rsi(df)
 
 df[['Close', 'RSI']].head(25)
+
+import matplotlib.dates as mdates
+
+# Line Chart with Moving Averages
+plt.figure(figsize=(14, 7))
+plt.plot(df.index, df['Close'], label='Close Price', color='blue', alpha=0.5)
+plt.plot(df.index, df['MA20'], label='20-Day MA', color='red', linestyle='--')
+plt.plot(df.index, df['MA50'], label='50-Day MA', color='green', linestyle='--')
+
+plt.title('GBP/USD Exchange Rate with Moving Averages')
+plt.xlabel('Date')
+plt.ylabel('Exchange Rate')
+plt.legend()
+plt.grid(True)
+plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%Y-%m'))
+plt.gca().xaxis.set_major_locator(mdates.MonthLocator())
+plt.xticks(rotation=45)
+plt.tight_layout()
+plt.show()
+
+# Bollinger Bands
+plt.figure(figsize=(14, 7))
+plt.plot(df.index, df['Close'], label='Close Price', color='blue', alpha=0.5)
+plt.plot(df.index, df['BB_upper'], label='Upper Bollinger Band', color='red', linestyle='--')
+plt.plot(df.index, df['BB_lower'], label='Lower Bollinger Band', color='green', linestyle='--')
+
+plt.fill_between(df.index, df['BB_upper'], df['BB_lower'], color='gray', alpha=0.2)
+
+plt.title('GBP/USD Exchange Rate with Bollinger Bands')
+plt.xlabel('Date')
+plt.ylabel('Exchange Rate')
+plt.legend()
+plt.grid(True)
+plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%Y-%m'))
+plt.gca().xaxis.set_major_locator(mdates.MonthLocator())
+plt.xticks(rotation=45)
+plt.tight_layout()
+plt.show()
