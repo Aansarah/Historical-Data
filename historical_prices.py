@@ -92,3 +92,32 @@ df['Close'].fillna(method='ffill', inplace=True)
 df['Daily Change %'] = df['Close'].pct_change() * 100
 
 df.head()
+
+### Step 2: Analytical Techniques
+#Now that the data is preprocessed, I will proceed with the analytical techniques:
+
+#1. **Trend Analysis**: Calculate moving averages (20-day and 50-day) to identify trends.
+#2. **Volatility Analysis**: Calculate Bollinger Bands and the Relative Strength Index (RSI) to assess volatility.
+
+#Let's calculate the moving averages first.
+
+# Calculate moving averages
+df['MA20'] = df['Close'].rolling(window=20).mean()
+df['MA50'] = df['Close'].rolling(window=50).mean()
+
+df[['Close', 'MA20', 'MA50']].head(25)
+
+#Now, let's calculate the Relative Strength Index (RSI) to further assess volatility.
+
+def calculate_rsi(data, window=14):
+    delta = data['Close'].diff(1)
+    gain = (delta.where(delta > 0, 0)).rolling(window=window).mean()
+    loss = (-delta.where(delta < 0, 0)).rolling(window=window).mean()
+    rs = gain / loss
+    rsi = 100 - (100 / (1 + rs))
+    return rsi
+
+# Calculate RSI
+df['RSI'] = calculate_rsi(df)
+
+df[['Close', 'RSI']].head(25)
