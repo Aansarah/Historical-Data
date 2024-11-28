@@ -22,20 +22,20 @@ data = pd.read_csv("/content/drive/MyDrive/final project/historical_prices_.csv"
 
 # Data Preprocessing
 # Convert 'Date' to datetime format
-df['Date'] = pd.to_datetime(df['Date'])
+data['Date'] = pd.to_datetime(data['Date'])
 # Sort data by date
-df.sort_values('Date', inplace=True)
+data.sort_values('Date', inplace=True)
 # Set 'Date' as index
-df.set_index('Date', inplace=True)
+data.set_index('Date', inplace=True)
 
 # Handle missing values
 # Assuming 'Close' is the main column of interest, fill missing values with the previous value
-df['Close'].fillna(method='ffill', inplace=True)
+data['Close'].fillna(method='ffill', inplace=True)
 
 # Calculate daily percentage change
-df['Daily Change %'] = df['Close'].pct_change() * 100
+data['Daily Change %'] = data['Close'].pct_change() * 100
 
-df.head()
+data.head()
 
 ### Step 2: Analytical Techniques
 #Now that the data is preprocessed, I will proceed with the analytical techniques:
