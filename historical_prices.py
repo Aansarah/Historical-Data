@@ -46,10 +46,10 @@ data.head()
 #Let's calculate the moving averages first.
 
 # Calculate moving averages
-df['MA20'] = df['Close'].rolling(window=20).mean()
-df['MA50'] = df['Close'].rolling(window=50).mean()
+data['MA20'] = data['Close'].rolling(window=20).mean()
+data['MA50'] = data['Close'].rolling(window=50).mean()
 
-df[['Close', 'MA20', 'MA50']].head(25)
+data[['Close', 'MA20', 'MA50']].head(25)
 
 #Now, let's calculate the Relative Strength Index (RSI) to further assess volatility.
 
