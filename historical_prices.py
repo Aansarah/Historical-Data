@@ -80,4 +80,47 @@ data['RSI'] = calculate_rsi(data)
 
 data[['Close', 'RSI']].head(25)
 
+from statsmodels.tsa.stattools import adfuller
+
+# Augmented Dickey-Fuller Test
+adf_test = adfuller(data['Close'].dropna())
+
+print("ADF Test Statistic:", adf_test[0])
+print("p-value:", adf_test[1])
+print("Critical Values:", adf_test[4])
+
+if adf_test[1] <= 0.05:
+    print("The time series is stationary (reject null hypothesis).")
+else:
+    print("The time series is not stationary (fail to reject null hypothesis).")
+
+from scipy.stats import shapiro
+
+# Shapiro-Wilk Test
+stat, p = shapiro(data['Daily Change %'].dropna())
+
+print("Shapiro-Wilk Test Statistic:", stat)
+print("p-value:", p)
+
+from scipy.stats import ttest_ind
+
+# Define a split date
+split_date = '2023-01-01'
+
+# Divide the data
+pre_split = data[data.index < split_date]['Daily Change %'].dropna()
+post_split = data[data.index >= split_date]['Daily Change %'].dropna()
+
+# T-Test
+t_stat, p_value = ttest_ind(pre_split, post_split)
+
+print("T-Test Statistic:", t_stat)
+print("p-value:", p_value)
+
+if p_value <= 0.05:
+    print("There is a significant difference in volatility before and after the split date.")
+else:
+    print("There is no significant difference in volatility before and after the split date.")
+
+
 
