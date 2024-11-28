@@ -283,5 +283,15 @@ plt.xticks(rotation=45)
 plt.tight_layout()
 plt.show()
 
+from statsmodels.graphics.tsaplots import plot_acf
+
+# Autocorrelation of Daily Percentage Changes
+plt.figure(figsize=(10, 6))
+plot_acf(data['Daily Change %'].dropna(), lags=30, alpha=0.05)
+plt.title('Autocorrelation of Daily Percentage Changes')
+plt.tight_layout()
+plt.show()
+
+
 
 
