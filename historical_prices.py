@@ -51,6 +51,20 @@ data['MA50'] = data['Close'].rolling(window=50).mean()
 
 data[['Close', 'MA20', 'MA50']].head(25)
 
+### Step 3: Volatility Analysis
+
+#Next, I will calculate the Bollinger Bands and the Relative Strength Index (RSI) to assess volatility.
+
+#Let's start with calculating the Bollinger Bands.
+
+# Calculate Bollinger Bands
+window = 20
+std_dev = 2
+data['BB_upper'] = data['MA20'] + (data['Close'].rolling(window=window).std() * std_dev)
+data['BB_lower'] = data['MA20'] - (data['Close'].rolling(window=window).std() * std_dev)
+
+data[['Close', 'BB_upper', 'BB_lower']].head(25)
+
 #Now, let's calculate the Relative Strength Index (RSI) to further assess volatility.
 
 def calculate_rsi(data, window=14):
@@ -62,72 +76,8 @@ def calculate_rsi(data, window=14):
     return rsi
 
 # Calculate RSI
-df['RSI'] = calculate_rsi(df)
+data['RSI'] = calculate_rsi(data)
 
-df[['Close', 'RSI']].head(25)
+data[['Close', 'RSI']].head(25)
 
-import matplotlib.dates as mdates
 
-# Line Chart with Moving Averages
-plt.figure(figsize=(14, 7))
-plt.plot(df.index, df['Close'], label='Close Price', color='blue', alpha=0.5)
-plt.plot(df.index, df['MA20'], label='20-Day MA', color='red', linestyle='--')
-plt.plot(df.index, df['MA50'], label='50-Day MA', color='green', linestyle='--')
-
-plt.title('GBP/USD Exchange Rate with Moving Averages')
-plt.xlabel('Date')
-plt.ylabel('Exchange Rate')
-plt.legend()
-plt.grid(True)
-plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%Y-%m'))
-plt.gca().xaxis.set_major_locator(mdates.MonthLocator())
-plt.xticks(rotation=45)
-plt.tight_layout()
-plt.show()
-
-# Bollinger Bands
-plt.figure(figsize=(14, 7))
-plt.plot(df.index, df['Close'], label='Close Price', color='blue', alpha=0.5)
-plt.plot(df.index, df['BB_upper'], label='Upper Bollinger Band', color='red', linestyle='--')
-plt.plot(df.index, df['BB_lower'], label='Lower Bollinger Band', color='green', linestyle='--')
-
-plt.fill_between(df.index, df['BB_upper'], df['BB_lower'], color='gray', alpha=0.2)
-
-plt.title('GBP/USD Exchange Rate with Bollinger Bands')
-plt.xlabel('Date')
-plt.ylabel('Exchange Rate')
-plt.legend()
-plt.grid(True)
-plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%Y-%m'))
-plt.gca().xaxis.set_major_locator(mdates.MonthLocator())
-plt.xticks(rotation=45)
-plt.tight_layout()
-plt.show()
-
-# Relative Strength Index (RSI)
-plt.figure(figsize=(14, 7))
-plt.plot(df.index, df['RSI'], label='RSI', color='purple')
-plt.axhline(70, linestyle='--', alpha=0.5, color='red')
-plt.axhline(30, linestyle='--', alpha=0.5, color='green')
-
-plt.title('GBP/USD Relative Strength Index (RSI)')
-plt.xlabel('Date')
-plt.ylabel('RSI')
-plt.legend()
-plt.grid(True)
-plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%Y-%m'))
-plt.gca().xaxis.set_major_locator(mdates.MonthLocator())
-plt.xticks(rotation=45)
-plt.tight_layout()
-plt.show()
-
-# Histogram of Daily Percentage Changes
-plt.figure(figsize=(10, 6))
-plt.hist(df['Daily Change %'].dropna(), bins=50, color='blue', alpha=0.7)
-
-plt.title('Histogram of Daily Percentage Changes in GBP/USD')
-plt.xlabel('Daily Percentage Change (%)')
-plt.ylabel('Frequency')
-plt.grid(True)
-plt.tight_layout()
-plt.show()
