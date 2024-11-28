@@ -122,5 +122,166 @@ if p_value <= 0.05:
 else:
     print("There is no significant difference in volatility before and after the split date.")
 
+from statsmodels.tsa.arima.model import ARIMA
+
+# Fit ARIMA Model
+model = ARIMA(data['Close'], order=(1, 1, 1))  # ARIMA(p, d, q) parameters can be tuned
+arima_result = model.fit()
+
+# Summary of ARIMA Model
+print(arima_result.summary())
+
+import matplotlib.dates as mdates
+
+# Line Chart with Moving Averages
+plt.figure(figsize=(14, 7))
+plt.plot(data.index, data['Close'], label='Close Price', color='blue', alpha=0.5)
+plt.plot(data.index, data['MA20'], label='20-Day MA', color='red', linestyle='--')
+plt.plot(data.index, data['MA50'], label='50-Day MA', color='green', linestyle='--')
+
+plt.title('GBP/USD Exchange Rate with Moving Averages')
+plt.xlabel('Date')
+plt.ylabel('Exchange Rate')
+plt.legend()
+plt.grid(True)
+plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%Y-%m'))
+plt.gca().xaxis.set_major_locator(mdates.MonthLocator())
+plt.xticks(rotation=45)
+plt.tight_layout()
+plt.show()
+
+# Bollinger Bands
+plt.figure(figsize=(14, 7))
+plt.plot(data.index, data['Close'], label='Close Price', color='blue', alpha=0.5)
+plt.plot(data.index, data['BB_upper'], label='Upper Bollinger Band', color='red', linestyle='--')
+plt.plot(data.index, data['BB_lower'], label='Lower Bollinger Band', color='green', linestyle='--')
+
+plt.fill_between(data.index, data['BB_upper'], data['BB_lower'], color='gray', alpha=0.2)
+
+plt.title('GBP/USD Exchange Rate with Bollinger Bands')
+plt.xlabel('Date')
+plt.ylabel('Exchange Rate')
+plt.legend()
+plt.grid(True)
+plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%Y-%m'))
+plt.gca().xaxis.set_major_locator(mdates.MonthLocator())
+plt.xticks(rotation=45)
+plt.tight_layout()
+plt.show()
+
+# Relative Strength Index (RSI)
+plt.figure(figsize=(14, 7))
+plt.plot(data.index, data['RSI'], label='RSI', color='purple')
+plt.axhline(70, linestyle='--', alpha=0.5, color='red')
+plt.axhline(30, linestyle='--', alpha=0.5, color='green')
+
+plt.title('GBP/USD Relative Strength Index (RSI)')
+plt.xlabel('Date')
+plt.ylabel('RSI')
+plt.legend()
+plt.grid(True)
+plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%Y-%m'))
+plt.gca().xaxis.set_major_locator(mdates.MonthLocator())
+plt.xticks(rotation=45)
+plt.tight_layout()
+plt.show()
+
+# Histogram of Daily Percentage Changes
+plt.figure(figsize=(10, 6))
+plt.hist(data['Daily Change %'].dropna(), bins=50, color='blue', alpha=0.7)
+
+plt.title('Histogram of Daily Percentage Changes in GBP/USD')
+plt.xlabel('Daily Percentage Change (%)')
+plt.ylabel('Frequency')
+plt.grid(True)
+plt.tight_layout()
+plt.show()
+
+# Correlation Matrix
+plt.figure(figsize=(8, 6))
+correlation_matrix = data[['Close', 'Daily Change %', 'MA20', 'MA50', 'RSI']].corr()
+sns.heatmap(correlation_matrix, annot=True, cmap='coolwarm', fmt=".2f")
+
+plt.title('Correlation Matrix')
+plt.tight_layout()
+plt.show()
+
+# Monthly Mean Prices
+data['Month'] = data.index.month
+monthly_mean = data.groupby('Month')['Close'].mean()
+
+# Line Chart of Monthly Trends
+plt.figure(figsize=(10, 6))
+plt.plot(monthly_mean.index, monthly_mean.values, marker='o', color='blue')
+
+plt.title('Monthly Average Closing Price of GBP/USD')
+plt.xlabel('Month')
+plt.ylabel('Average Closing Price')
+plt.grid(True)
+plt.xticks(range(1, 13), ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'])
+plt.tight_layout()
+plt.show()
+
+# Install mplfinance
+!pip install mplfinance
+
+# Import necessary libraries
+from mplfinance.original_flavor import candlestick_ohlc
+import matplotlib.dates as mdates
+import matplotlib.pyplot as plt
+
+from mplfinance.original_flavor import candlestick_ohlc
+import matplotlib.dates as mdates
+
+# Prepare OHLC data
+ohlc_data = data[['Close']].resample('D').ohlc().dropna()
+ohlc_data.reset_index(inplace=True)
+ohlc_data['Date'] = mdates.date2num(ohlc_data['Date'])
+
+# Candlestick Chart
+fig, ax = plt.subplots(figsize=(14, 7))
+candlestick_ohlc(ax, ohlc_data.values, width=0.6, colorup='green', colordown='red', alpha=0.8)
+
+# Overlay Moving Averages
+ax.plot(data.index, data['MA20'], label='20-Day MA', color='blue', linestyle='--')
+ax.plot(data.index, data['MA50'], label='50-Day MA', color='orange', linestyle='--')
+
+# Bollinger Bands
+ax.fill_between(data.index, data['BB_upper'], data['BB_lower'], color='gray', alpha=0.2)
+
+# Formatting
+ax.xaxis_date()
+ax.xaxis.set_major_formatter(mdates.DateFormatter('%Y-%m'))
+plt.title('GBP/USD Candlestick Chart with Indicators')
+plt.xlabel('Date')
+plt.ylabel('Price')
+plt.legend()
+plt.grid(True)
+plt.tight_layout()
+plt.show()
+
+# MACD Calculation
+data['EMA12'] = data['Close'].ewm(span=12, adjust=False).mean()
+data['EMA26'] = data['Close'].ewm(span=26, adjust=False).mean()
+data['MACD'] = data['EMA12'] - data['EMA26']
+data['Signal Line'] = data['MACD'].ewm(span=9, adjust=False).mean()
+
+# MACD Chart
+plt.figure(figsize=(14, 7))
+plt.plot(data.index, data['MACD'], label='MACD', color='blue')
+plt.plot(data.index, data['Signal Line'], label='Signal Line', color='red', linestyle='--')
+
+plt.title('MACD and Signal Line for GBP/USD')
+plt.xlabel('Date')
+plt.ylabel('MACD')
+plt.axhline(0, color='black', linestyle='--', linewidth=1)
+plt.legend()
+plt.grid(True)
+plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%Y-%m'))
+plt.gca().xaxis.set_major_locator(mdates.MonthLocator())
+plt.xticks(rotation=45)
+plt.tight_layout()
+plt.show()
+
 
 
