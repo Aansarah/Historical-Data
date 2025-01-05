@@ -1,1 +1,3 @@
-# Historical-Data
+**Comprehensive Analysis and Predictive Modeling of GBP/USD Exchange Rates Utilizing Time-Series Techniques**
+
+The GBP/USD consists of the British pound being the base currency and the U.S dollar as the quote currency, and it is one of the most popular financial instruments in the forex market. It is most essential for the traders, investors and the analyst, to get the actual understanding of its price trends of the past, so as to make a wise decision for the future trading and capitalize on the future tendencies of the market. This project therefore seeks to bring out trends, fluctuations, cycle of price of GBP/USD from November 2023 to November 2024. 
